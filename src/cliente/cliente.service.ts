@@ -22,7 +22,7 @@ export class ClienteService {
   //   return this.clienteRep.findAndCount({ relations: { telefones: true } });
   // }
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<ClienteDto>> {
-    const whereOption: any = { nome: undefined, id: Not('null') };
+    const whereOption: any = { nome: undefined };
     if (pageOptionsDto.search) {
       whereOption.nome = ILike(`%${pageOptionsDto.search}%`);
     }
@@ -33,6 +33,7 @@ export class ClienteService {
       where: whereOption,
       skip: pageOptionsDto.page,
       take: pageOptionsDto.limit,
+      relations: { telefones: false },
     });
     return new PageDto(listagem, pageOptionsDto, qtd);
   }

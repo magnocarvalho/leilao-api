@@ -22,6 +22,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       database: 'test3',
       entities: [Cliente, Telefone, Login],
       synchronize: true,
+      logger: 'advanced-console',
+      logging: 'all',
     }),
     CacheModule.register({ isGlobal: true }),
     ProdutoModule,
