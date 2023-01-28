@@ -1,0 +1,30 @@
+import { ClienteDto } from './../../cliente/dto/cliente.dto';
+import { CreateTelefoneDto } from './../../cliente/dto/create-telefone.dto';
+import { CreateClienteDto } from './../../cliente/dto/create-cliente.dto';
+import { applyDecorators, Type } from '@nestjs/common';
+import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import { PageDto } from '../dto/page.dto';
+
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
+  return applyDecorators(
+    ApiExtraModels(PageDto, ClienteDto, CreateClienteDto, CreateTelefoneDto),
+    ApiOkResponse({
+      description: 'Successfully received model list',
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(PageDto) },
+          {
+            properties: {
+              results: {
+                type: 'array',
+                items: { $ref: getSchemaPath(model) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};

@@ -1,4 +1,8 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ClienteDto } from './dto/cliente.dto';
+import { PageDto } from './../shared/dto/page.dto';
+import { PageOptionsDto } from './../shared/dto/page-options.dto';
+import { ApiPaginatedResponse } from './../shared/paginated/api-paginated.decorator';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -11,20 +15,29 @@ import {
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { HttpCode, Query, UseInterceptors } from '@nestjs/common/decorators';
+import { CacheInterceptor } from '@nestjs/common/cache';
+import { HttpStatus } from '@nestjs/common/enums';
 
 @Controller('cliente')
 @ApiTags('Cliente')
+@UseInterceptors(CacheInterceptor)
 export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
+  @ApiProperty({ type: CreateClienteDto })
   create(@Body() createClienteDto: CreateClienteDto) {
     return this.clienteService.create(createClienteDto);
   }
 
   @Get()
-  findAll() {
-    return this.clienteService.findAll();
+  @HttpCode(HttpStatus.OK)
+  @ApiPaginatedResponse(ClienteDto)
+  findAll(
+    @Query() pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<ClienteDto>> {
+    return this.clienteService.findAll(pageOptionsDto);
   }
 
   @Get(':id')

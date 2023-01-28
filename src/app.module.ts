@@ -1,5 +1,6 @@
+import { Login } from './cliente/entities/login.entity';
 import { Cliente } from './cliente/entities/cliente.entity';
-import { Module } from '@nestjs/common';
+import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProdutoModule } from './produto/produto.module';
@@ -8,6 +9,7 @@ import { LanceModule } from './lance/lance.module';
 import { ArremateModule } from './arremate/arremate.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Telefone } from './cliente/entities/telefone.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,15 +20,22 @@ import { Telefone } from './cliente/entities/telefone.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'test3',
-      entities: [Cliente, Telefone],
+      entities: [Cliente, Telefone, Login],
       synchronize: true,
     }),
+    CacheModule.register({ isGlobal: true }),
     ProdutoModule,
     ClienteModule,
     LanceModule,
     ArremateModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}
