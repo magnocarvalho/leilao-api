@@ -4,6 +4,6 @@ import { ArremateController } from './arremate.controller';
 
 @Module({
   controllers: [ArremateController],
-  providers: [ArremateService]
+  providers: [ArremateService],
 })
 export class ArremateModule {}

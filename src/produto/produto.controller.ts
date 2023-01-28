@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { ProdutoService } from './produto.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
 
 @Controller('produto')
+@ApiTags('Produto')
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
@@ -24,6 +35,14 @@ export class ProdutoController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProdutoDto: UpdateProdutoDto) {
+    return this.produtoService.update(+id, updateProdutoDto);
+  }
+
+  @Put(':id')
+  updatePut(
+    @Param('id') id: string,
+    @Body() updateProdutoDto: UpdateProdutoDto,
+  ) {
     return this.produtoService.update(+id, updateProdutoDto);
   }
 
